@@ -1,0 +1,306 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================
+   1. VARIÁVEIS GLOBAIS (ARK SYSTEM)
+   ============================================= */
+:root {
+    /* Cores Base */
+    --bg-deep: #050505;
+    --bg-panel: #0a0a0a;
+    --bg-card: #0d0d0d;
+    
+    /* Cor Primária - Ciano Neon (Herança do Ark) */
+    --ark-cyan: #b6fff3;
+    --ark-cyan-dim: #80d0d0;
+    --ark-glow: rgba(193, 240, 248, 0.6);
+    --ark-glow-strong: rgba(176, 255, 248, 0.9);
+    
+    /* Gradientes Padrão */
+    --grad-dark: linear-gradient(145deg, #1a1a1a, #000000);
+    --grad-panel: linear-gradient(145deg, rgba(20, 25, 30, 0.95), rgba(10, 15, 20, 0.98));
+    --text-gradient: linear-gradient(to right, #d6feff, #cecece);
+    
+    /* Fontes */
+    --font-display: 'Orbitron', sans-serif;
+    --font-body: 'Rajdhani', sans-serif;
+    
+    /* Bordas e Sombras */
+    --border-glow: 2px solid rgba(156, 240, 255, 0.5);
+    --shadow-glow: 0 0 15px rgba(193, 240, 248, 0.411);
+    --shadow-hover: 0 0 25px rgba(176, 255, 248, 0.6);
+}
+
+/* =============================================
+   2. BASE DO CORPO
+   ============================================= */
+body {
+    background-color: var(--bg-deep);
+    background-image: 
+        radial-gradient(circle at 20% 30%, #0a1a1a 0%, #030808 100%),
+        repeating-linear-gradient(45deg, rgba(0, 242, 255, 0.01) 0px, rgba(0, 242, 255, 0.01) 2px, 
+                                  transparent 2px, transparent 8px);
+    color: #e0e0e0;
+    font-family: var(--font-body);
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* =============================================
+   3. COMPONENTES REUTILIZÁVEIS (Classes Utilitárias)
+   ============================================= */
+@layer components {
+    /* Painel Padrão (Vidro Escuro com Borda Neon) */
+    .ark-panel {
+        background: var(--grad-panel);
+        border: var(--border-glow);
+        border-radius: 15px;
+        box-shadow: var(--shadow-glow);
+        backdrop-filter: blur(10px);
+        padding: 1.5rem;
+        transition: box-shadow 0.3s ease;
+    }
+    .ark-panel:hover {
+        box-shadow: var(--shadow-hover);
+    }
+
+    /* Card Interativo */
+    .ark-card {
+        background: var(--grad-dark);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 2px solid transparent;
+        box-shadow: var(--shadow-glow);
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        position: relative;
+        overflow: hidden;
+        color: inherit;
+        text-decoration: none;
+        display: block;
+    }
+    .ark-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transform: skewX(-25deg);
+        transition: left 0.6s ease-in-out;
+    }
+    .ark-card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: var(--shadow-hover);
+        border-color: var(--ark-cyan);
+    }
+    .ark-card:hover::before {
+        left: 150%;
+    }
+
+    /* Título Principal com Efeito 3D e Onda */
+    .ark-title {
+        font-family: var(--font-display);
+        font-size: 3.5rem;
+        font-weight: bold;
+        text-align: center;
+        background: var(--grad-dark);
+        border-radius: 25px;
+        padding: 1.5rem 3rem;
+        border: 3px solid #333;
+        color: #e0e0e0;
+        text-shadow: 
+            0 0 10px var(--ark-glow),
+            0 0 30px rgba(193, 240, 248, 0.4),
+            0 0 60px rgba(193, 240, 248, 0.2);
+        box-shadow: var(--shadow-glow);
+        position: relative;
+        overflow: hidden;
+        max-width: 500px;
+        margin: 2rem auto;
+        perspective: 1000px;
+        animation: floatEffect 5s ease-in-out infinite, pulseGlowCyan 3s infinite alternate;
+        transform-style: preserve-3d;
+    }
+    .ark-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(90deg, #999, var(--ark-cyan), #d6feff, var(--ark-cyan), #999);
+        animation: wave 8s infinite linear;
+    }
+
+    /* Botão de Ação */
+    .ark-btn {
+        background: var(--grad-dark);
+        color: white;
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 40px;
+        cursor: pointer;
+        box-shadow: var(--shadow-glow);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(156, 240, 255, 0.3);
+        display: inline-block;
+        text-decoration: none;
+        text-align: center;
+    }
+    .ark-btn:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-hover);
+        border-color: var(--ark-cyan);
+        background: linear-gradient(145deg, #222, #050505);
+    }
+
+    /* Input Estilizado */
+    .ark-input {
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid var(--ark-cyan-dim);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        color: white;
+        font-family: var(--font-body);
+        transition: box-shadow 0.3s, border-color 0.3s;
+        width: 100%;
+    }
+    .ark-input:focus {
+        outline: none;
+        border-color: var(--ark-cyan);
+        box-shadow: 0 0 15px var(--ark-glow);
+    }
+}
+
+/* =============================================
+   4. ANIMAÇÕES GLOBAIS
+   ============================================= */
+@keyframes pulseGlowCyan {
+    0% { box-shadow: 0 0 15px var(--ark-glow); }
+    100% { box-shadow: 0 0 35px var(--ark-cyan); }
+}
+@keyframes floatEffect {
+    0% { transform: translateY(0) rotateX(0deg); }
+    50% { transform: translateY(-10px) rotateX(2deg); }
+    100% { transform: translateY(0) rotateX(0deg); }
+}
+@keyframes wave {
+    0% { transform: scaleX(0.1); left: 0%; background-position: 0% 0%; }
+    25% { transform: scaleX(1); left: 0%; background-position: 100% 0%; }
+    50% { transform: scaleX(0.1); left: 90%; background-position: 0% 0%; }
+    75% { transform: scaleX(1); left: 0%; background-position: 100% 0%; }
+    100% { transform: scaleX(0.1); left: 0%; background-position: 0% 0%; }
+}
+/* Animação de Gradiente para Links */
+@keyframes gradiente-animado {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* =============================================
+   5. ESTILOS ESPECÍFICOS PARA LAYOUTS
+   ============================================= */
+/* Container de Cards em Grid */
+.ark-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+/* Header da Página */
+.ark-header {
+    background: rgba(10, 20, 20, 0.7);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--ark-cyan-dim);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+.ark-header h2 {
+    font-family: var(--font-display);
+    color: transparent;
+    background: var(--text-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    text-shadow: 0 0 8px var(--ark-glow);
+    letter-spacing: 2px;
+}
+
+/* Footer Estilizado */
+.ark-footer {
+    background: var(--grad-dark);
+    border-top: 1px solid #1e293b;
+    color: #aaa;
+    font-family: var(--font-body);
+    padding: 2rem 0;
+}
+.ark-footer a {
+    color: var(--ark-cyan);
+    text-decoration: none;
+    background: linear-gradient(45deg, #fbf9fd, var(--ark-cyan));
+    background-size: 300%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradiente-animado 4s ease infinite;
+    transition: all 0.3s;
+}
+.ark-footer a:hover {
+    -webkit-text-fill-color: white;
+    text-shadow: 0 0 8px var(--ark-cyan);
+}
+
+/* =============================================
+   6. RESPONSIVIDADE
+   ============================================= */
+@media (max-width: 780px) {
+    .ark-title {
+        font-size: 2.5rem;
+        padding: 1rem 2rem;
+        max-width: 90%;
+    }
+}
+@media (max-width: 480px) {
+    .ark-title {
+        font-size: 1.8rem;
+        padding: 0.8rem 1.5rem;
+    }
+    .ark-btn {
+        font-size: 1rem;
+        padding: 0.5rem 1.5rem;
+    }
+}
+
+/* =============================================
+   7. TEMAS POR CLASSE (OPCIONAL - JÁ EXISTENTE)
+   ============================================= */
+.theme-humano { --ark-cyan: #00f2ff; --ark-cyan-dim: #00c8d0; }
+.theme-morto-vivo { --ark-cyan: #a855f7; --ark-cyan-dim: #8b3cff; }
+.theme-mistico { --ark-cyan: #3b82f6; --ark-cyan-dim: #1e6ef0; }
+.theme-orc { --ark-cyan: #22c55e; --ark-cyan-dim: #16a34a; }
+.theme-esclarlate { --ark-cyan: #ef4444; --ark-cyan-dim: #dc2626; }
+
+/* Aplica a cor dinâmica em elementos que usam a variável */
+.ark-panel, .ark-card, .ark-btn, .ark-input, .ark-header {
+    --main-theme: var(--ark-cyan);
+    border-color: var(--main-theme);
+}
+
+.ark-card, .ark-panel, .ark-title {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.animate-visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
