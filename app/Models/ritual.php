@@ -17,4 +17,5 @@ class Ritual extends Model
     {
         return $this->belongsTo(Character::class);
     }
+    
 }
