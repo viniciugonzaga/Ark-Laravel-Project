@@ -60,15 +60,11 @@ class CharacterController extends Controller
         return redirect()->route('fichas.show', $character->id)->with('success', 'Unidade Registrada.');
     }
 
-    /**
-     * MÉTODO SHOW - Resolve o erro de "Undefined Method"
-     */
     public function show($id)
     {
         $ficha = Character::with(['mutations', 'bonuses', 'survivorPowers', 'rituals'])
                           ->findOrFail($id);
 
-        // Bloqueia se a ficha não for do usuário logado
         if ($ficha->user_id !== Auth::id()) abort(403, 'Acesso negado ao DNA.');
 
         return view('fichas.show', compact('ficha'));
@@ -79,7 +75,6 @@ class CharacterController extends Controller
         $ficha = Character::with(['mutations', 'bonuses', 'survivorPowers', 'rituals'])
                           ->findOrFail($id);
 
-        // Bloqueia se a ficha não for do usuário logado
         if ($ficha->user_id !== Auth::id()) abort(403);
 
         return view('fichas.edit', compact('ficha'));
@@ -91,7 +86,6 @@ class CharacterController extends Controller
         
         if ($ficha->user_id !== Auth::id()) abort(403);
 
-        // Validamos os dados básicos
         $data = $request->except(['mutations', 'bonuses', 'powers', 'rituals', 'image']);
 
         if ($request->hasFile('image')) {
@@ -101,7 +95,7 @@ class CharacterController extends Controller
 
         $ficha->update($data);
 
-        // Sincronização limpa (Remove antigos e insere novos)
+        // Limpa relações antigas para evitar duplicidade
         $ficha->mutations()->delete();
         $ficha->bonuses()->delete();
         $ficha->survivorPowers()->delete();
@@ -112,41 +106,53 @@ class CharacterController extends Controller
         return redirect()->route('fichas.show', $ficha->id)->with('success', 'DNA Reconfigurado.');
     }
 
+    /**
+     * Remove a ficha do sistema.
+     */
+    public function destroy($id)
+    {
+        $character = Character::findOrFail($id);
+
+        // Segurança: Verifica se o personagem pertence ao usuário logado
+        if ($character->user_id !== Auth::id()) {
+            abort(403, 'Ação não autorizada.');
+        }
+
+        // Remove a imagem física do servidor
+        if ($character->image) {
+            Storage::disk('public')->delete($character->image);
+        }
+
+        // O delete() aqui remove o personagem. 
+        // Se as migrations não tiverem onDelete('cascade'), adicione as limpezas manuais aqui.
+        $character->delete();
+
+        return redirect()->route('fichas.index')->with('success', 'Unidade eliminada.');
+    }
+
     private function syncRelations(Character $character, Request $request)
     {
-        // Mutações
         if ($request->has('mutations') && is_array($request->mutations)) {
             foreach ($request->mutations as $mut) {
-                if (!empty($mut['name'])) {
-                    $character->mutations()->create($mut);
-                }
+                if (!empty($mut['name'])) $character->mutations()->create($mut);
             }
         }
 
-        // Bônus
         if ($request->has('bonuses') && is_array($request->bonuses)) {
             foreach ($request->bonuses as $bonus) {
-                if (!empty($bonus['name'])) {
-                    $character->bonuses()->create($bonus);
-                }
+                if (!empty($bonus['name'])) $character->bonuses()->create($bonus);
             }
         }
 
-        // Rituais
         if ($request->has('rituals') && is_array($request->rituals)) {
             foreach ($request->rituals as $ritual) {
-                if (!empty($ritual['name'])) {
-                    $character->rituals()->create($ritual);
-                }
+                if (!empty($ritual['name'])) $character->rituals()->create($ritual);
             }
         }
 
-        // Poderes (Mapeado de 'powers' no formulário para 'survivorPowers' no model)
         if ($request->has('powers') && is_array($request->powers)) {
             foreach ($request->powers as $power) {
-                if (!empty($power['name'])) {
-                    $character->survivorPowers()->create($power);
-                }
+                if (!empty($power['name'])) $character->survivorPowers()->create($power);
             }
         }
     }
