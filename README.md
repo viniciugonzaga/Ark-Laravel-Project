@@ -72,4 +72,4 @@ O sistema inclui um manual de regras em PDF disponível dentro da aplicação.
 
 <h2>🧠 Autor</h2>
 
-<p>Vinícius Gonzaga</p>
+<p>Vinícius Gonzaga Pereira</p>
