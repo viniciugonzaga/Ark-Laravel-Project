@@ -1,4 +1,4 @@
-<h1 align="center">ARK RPG SYSTEM</h1>
+<h1 align="center">ARK RPG </h1>
 
 <p align="center">
 Sistema de RPG web inspirado em sobrevivência, evolução e narrativa dinâmica.
